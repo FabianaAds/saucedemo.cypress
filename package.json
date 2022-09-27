@@ -1,0 +1,23 @@
+{
+  "name": "Projetosensedata",
+  "version": "1.0.0",
+  "description": "e-commerce automation",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FabianaAds/saucedemo.cypress.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FabianaAds/saucedemo.cypress/issues"
+  },
+  "homepage": "https://github.com/FabianaAds/saucedemo.cypress#readme",
+  "dependencies": {
+    "cypress": "^10.9.0"
+  }
+}
