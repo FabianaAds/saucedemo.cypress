@@ -11,6 +11,7 @@ describe("make purchases on e-commerce", () => {
         Cypress.config("defaultCommandTimeout", 20000)
         cy.viewport(1920, 1080)
         cy.clearCookies();
+        cy.clearSessionStorage();
         cy.login()
           
   
@@ -82,6 +83,6 @@ describe("make purchases on e-commerce", () => {
     cy.get('#logout_sidebar_link')   
       .click()
 
-    })
+    }) 
 
 })
