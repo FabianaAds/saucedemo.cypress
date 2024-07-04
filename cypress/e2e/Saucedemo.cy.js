@@ -1,88 +1,70 @@
 /// <reference types="cypress"/>
-
-import faker from "faker-br"; 
+import faker from "faker-br";
 faker.locale = "pt_BR";
 
-
-
-
 describe("make purchases on e-commerce", () => {
-    beforeEach(() => {
-        Cypress.config("defaultCommandTimeout", 20000)
-        cy.viewport(1920, 1080)
-        cy.clearCookies();
-        cy.clearSessionStorage();
-        cy.login()
-          
-  
-    });
+  beforeEach(() => {
+    // Aumentar o timeout padrão para comandos longos
+    Cypress.config("defaultCommandTimeout", 20000);
+    // Definir viewport para simular uma tela grande
+    cy.viewport(1920, 1080);
+    // Limpar cookies e sessionStorage antes de cada teste
+    cy.clearCookies();
+    cy.clearSessionStorage();
+    // Realizar login antes de cada teste
+    cy.login(); // Utilizando comando personalizado para login
+  });
 
-    
-      it('make purchases', () => {
-      
-    //Sort products by value (low to high)
-     cy.get('[id="header_container"]').contains("Products").should('be.visible')
+  it('make purchases', () => {
+    // Ordenar produtos por preço (do mais baixo para o mais alto)
+    cy.get('[id="header_container"]').contains("Products").should('be.visible'); // Verifica se a seção "Products" está visível
 
+    cy.get('select').select('Price (low to high)'); // Seleciona a opção de ordenação por preço
 
-     cy.get('select').select('Price (low to high)')
-      
-     //Add the following products to cart: Sauce Labs Onesie and Test.allTheThings() T-Shirt (Red)
-      
-     
-    //Add Test.allTheThings() T-Shirt (Red)
-    cy.get('[data-test="add-to-cart-test.allthethings()-t-shirt-(red)"]')
-      .click()
+    // Adicionar produtos ao carrinho
+    addToCart('Test.allTheThings() T-Shirt (Red)');
+    addToCart('Sauce Labs Onesie');
 
-    //Add Sauce Labs Onesie
-    cy.get('[data-test="add-to-cart-sauce-labs-onesie"]')
-      .click()
-    
-    //clicking on cart
-    cy.get('#shopping_cart_container')
-      .click()
-      .wait(2000)
+    // Acessar o carrinho
+    cy.get('#shopping_cart_container').click(); // Clica no ícone do carrinho
+    cy.wait(2000); // Espera um pouco para carregar a página do carrinho
 
-    //validating if I'm on the correct page
-    cy.contains("YOUR CART").should("be.visible")
+    // Verificar se está na página correta
+    cy.contains("YOUR CART").should("be.visible"); // Verifica se a página "YOUR CART" está visível
 
-    //clicking on checkout
-    cy.get('[name="checkout"]')
-      .click({force:true})
+    // Prosseguir para o checkout
+    cy.get('[name="checkout"]').click(); // Clica no botão de checkout
 
+    // Preencher informações de entrega
+    fillShippingInformation();
 
-    //filling in first Name
-    cy.get('input[id="first-name"]')
-      .type(faker.name.firstName())
+    // Concluir a compra
+    cy.get('#finish').click(); // Clica no botão para finalizar a compra
 
+    // Voltar para a página inicial
+    cy.get('[data-test="back-to-products"]').click(); // Clica no link para voltar aos produtos
 
-    //filling inLast Name
-    cy.get('input[id="last-name"]')
-      .type(faker.name.lastName())
+    // Fazer logout
+    logout();
+  });
 
-    //filling in ZipCode
-    cy.get('input[id="postal-code"]')
-      .type("18150000")
-        
+  // Função para adicionar produtos ao carrinho
+  function addToCart(productName) {
+    cy.get(`[data-test="add-to-cart-${productName.toLowerCase().replace(/ /g, "-")}"]`).click();
+    // Clica no botão "Add to Cart" do produto especificado
+  }
 
-    //clicking continue
-    cy.get('input[id="continue"]')
-      .click()
+  // Função para preencher informações de entrega
+  function fillShippingInformation() {
+    cy.get('input[id="first-name"]').type(faker.name.firstName()); // Preenche o campo de primeiro nome com um nome gerado aleatoriamente
+    cy.get('input[id="last-name"]').type(faker.name.lastName()); // Preenche o campo de último nome com um sobrenome gerado aleatoriamente
+    cy.get('input[id="postal-code"]').type("18150000"); // Preenche o campo de CEP com um valor fixo
+    cy.get('input[id="continue"]').click(); // Clica no botão de continuar
+  }
 
-    //completing the purchase
-    cy.get('#finish')
-      .click()
-
-    //clicking back to home
-    cy.get('[data-test="back-to-products"]')
-      .click()
-
-
-    //log out
-    cy.get('#react-burger-menu-btn')
-      .click()
-    cy.get('#logout_sidebar_link')   
-      .click()
-
-    }) 
-
-})
+  // Função para fazer logout
+  function logout() {
+    cy.get('#react-burger-menu-btn').click(); // Abre o menu lateral clicando no botão do menu
+    cy.get('#logout_sidebar_link').click(); // Clica no link de logout no menu lateral
+  }
+});
